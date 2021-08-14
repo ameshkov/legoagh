@@ -177,8 +177,8 @@ run_lego_cloudflare() {
     CLOUDFLARE_DNS_API_TOKEN="${CLOUDFLARE_DNS_API_TOKEN}" \
         ./lego \
         --dns cloudflare \
-        --domains "${domainName}" \
         --domains "${wildcardDomainName}" \
+        --domains "${domainName}" \
         --email "${email}" \
         run
 }
@@ -188,8 +188,8 @@ run_lego_godaddy() {
         GODADDY_API_SECRET="${GODADDY_API_SECRET}" \
         ./lego \
         --dns godaddy \
-        --domains "${domainName}" \
         --domains "${wildcardDomainName}" \
+        --domains "${domainName}" \
         --email "${email}" \
         run
 }
@@ -221,8 +221,8 @@ get_abs_filename() {
 
 copy_certificate() {
     certFileName="${DOMAIN_NAME}"
-    cp -f "./.lego/certificates/${certFileName}.key" "./${certFileName}.key"
-    cp -f "./.lego/certificates/${certFileName}.crt" "./${certFileName}.crt"
+    cp -f "./.lego/certificates/_.${certFileName}.key" "./${certFileName}.key"
+    cp -f "./.lego/certificates/_.${certFileName}.crt" "./${certFileName}.crt"
 
     log "Your certificate and key are available at:"
     log "$(get_abs_filename ${certFileName}.crt)"
