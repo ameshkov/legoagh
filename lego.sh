@@ -174,24 +174,61 @@ download_lego() {
 }
 
 run_lego_cloudflare() {
-    CLOUDFLARE_DNS_API_TOKEN="${CLOUDFLARE_DNS_API_TOKEN}" \
-        ./lego \
-        --dns cloudflare \
-        --domains "${wildcardDomainName}" \
-        --domains "${domainName}" \
-        --email "${email}" \
-        run
+    if [ "${SERVER:-}" != "" ] &&
+        [ "${EAB_KID:-}" != "" ] &&
+        [ "${EAB_HMAC:-}" != "" ]; then
+        CLOUDFLARE_DNS_API_TOKEN="${CLOUDFLARE_DNS_API_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --server "${SERVER:-}" \
+            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --dns cloudflare \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run
+    else
+        CLOUDFLARE_DNS_API_TOKEN="${CLOUDFLARE_DNS_API_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --dns cloudflare \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run
+    fi
 }
 
 run_lego_godaddy() {
-    GODADDY_API_KEY="${GODADDY_API_KEY}" \
-        GODADDY_API_SECRET="${GODADDY_API_SECRET}" \
-        ./lego \
-        --dns godaddy \
-        --domains "${wildcardDomainName}" \
-        --domains "${domainName}" \
-        --email "${email}" \
-        run
+    if [ "${SERVER:-}" != "" ] &&
+        [ "${EAB_KID:-}" != "" ] &&
+        [ "${EAB_HMAC:-}" != "" ]; then
+        GODADDY_API_KEY="${GODADDY_API_KEY}" \
+            GODADDY_API_SECRET="${GODADDY_API_SECRET}" \
+            ./lego \
+            --accept-tos \
+            --server "${SERVER:-}" \
+            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --dns godaddy \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run
+    else
+        GODADDY_API_KEY="${GODADDY_API_KEY}" \
+            GODADDY_API_SECRET="${GODADDY_API_SECRET}" \
+            ./lego \
+            --accept-tos \
+            --dns godaddy \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run
+    fi
 }
 
 run_lego() {

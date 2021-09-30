@@ -1,7 +1,7 @@
 # legoagh
 
-A simple script for automating using lego with [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome). 
-It downloads the latest available release of lego, runs it and obtains 
+A simple script for automating using lego with [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome).
+It downloads the latest available release of lego, runs it and obtains
 a wildcard certificate for the specified domain.
 
 Prepare:
@@ -34,5 +34,21 @@ DOMAIN_NAME="example.org" \
     DNS_PROVIDER="godaddy" \
     GODADDY_API_KEY="yourapikey" \
     GODADDY_API_SECRET="yourapisecret" \
+    ./lego.sh
+```
+
+By default, it uses [Let's Encrypt](https://letsencrypt.org/) to generate the certificate.
+
+Alternatively, you can use a different provider. For instance, [ZeroSSL](https://zerossl.com/).
+
+To do this, you need to sign up for a ZeroSSL account and obtain your EAB credentials.
+Then just pass it to the script:
+
+```bash
+SERVER="https://acme.zerossl.com/v2/DV90" \
+    EAB_KID="xxxx" \
+    EAB_HMAC="xxxx" \
+    ...
+    ...
     ./lego.sh
 ```
