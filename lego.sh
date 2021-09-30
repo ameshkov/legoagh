@@ -197,7 +197,8 @@ run_lego_cloudflare() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run
+            run \
+            --preferred-chain="ISRG Root X1"
     fi
 }
 
@@ -227,7 +228,8 @@ run_lego_godaddy() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run
+            run \
+            --preferred-chain="ISRG Root X1"
     fi
 }
 
