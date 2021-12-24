@@ -17,6 +17,12 @@ set -e -f -u
 #
 # CLOUDFLARE_DNS_API_TOKEN		Your API token.
 #
+# DigitalOcean
+# If you're using DigitalOcean, you must specify the API token:
+# https://cloud.digitalocean.com/account/api/tokens
+#
+# DO_AUTH_TOKEN		Your API token.
+#
 # GoDaddy
 # If you're using GoDaddy, you must specify the API secret and key. The API
 # credentials can be created here: https://developer.godaddy.com/keys
@@ -53,7 +59,7 @@ check_env() {
         error_exit "EMAIL must be specified"
     fi
 
-    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ]; then
+    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ] && [ "${DNS_PROVIDER}" != 'digitalocean' ]; then
         error_exit "DNS provider ${DNS_PROVIDER} is not supported"
     fi
 
@@ -70,6 +76,12 @@ check_env() {
 
         if [ -z "${GODADDY_API_SECRET+x}" ]; then
             error_exit "GODADDY_API_SECRET must be specified"
+        fi
+    fi
+
+    if [ "${DNS_PROVIDER}" = 'digitalocean' ]; then
+        if [ -z "${DO_AUTH_TOKEN+x}" ]; then
+            error_exit "DO_AUTH_TOKEN must be specified"
         fi
     fi
 }
@@ -233,6 +245,35 @@ run_lego_godaddy() {
     fi
 }
 
+run_lego_digitalocean() {
+    if [ "${SERVER:-}" != "" ] &&
+        [ "${EAB_KID:-}" != "" ] &&
+        [ "${EAB_HMAC:-}" != "" ]; then
+        DO_AUTH_TOKEN="${DO_AUTH_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --server "${SERVER:-}" \
+            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --dns digitalocean \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run
+    else
+        DO_AUTH_TOKEN="${DO_AUTH_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --dns digitalocean \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run \
+            --preferred-chain="ISRG Root X1"
+    fi
+}
+
 run_lego() {
     domainName="${DOMAIN_NAME}"
     wildcardDomainName="*.${DOMAIN_NAME}"
@@ -247,6 +288,10 @@ run_lego() {
     cloudflare)
         run_lego_cloudflare
         ;;
+
+    digitalocean)
+	run_lego_digitalocean
+	;;
 
     *)
         error_exit "Unsupported DNS provider ${DNS_PROVIDER}"
