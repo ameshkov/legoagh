@@ -37,6 +37,18 @@ DOMAIN_NAME="example.org" \
     ./lego.sh
 ```
 
+If you're using DigitalOcean, you need to [create an API](https://cloud.digitalocean.com/account/api/tokens) token first.
+
+Then run the script:
+
+```bash
+DOMAIN_NAME="example.org" \
+    EMAIL="you@email" \
+    DNS_PROVIDER="digitalocean" \
+    DO_AUTH_TOKEN="yourapitoken" \
+    ./lego.sh
+```
+
 By default, it uses [Let's Encrypt](https://letsencrypt.org/) to generate the certificate.
 
 Alternatively, you can use a different provider. For instance, [ZeroSSL](https://zerossl.com/).
