@@ -59,7 +59,7 @@ check_env() {
         error_exit "EMAIL must be specified"
     fi
 
-    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ] && [ "${DNS_PROVIDER}" != 'digitalocean' ]&& [ "${DNS_PROVIDER}" != 'duckdns' ]; then
+    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ] && [ "${DNS_PROVIDER}" != 'digitalocean' ] && [ "${DNS_PROVIDER}" != 'duckdns' ]; then
         error_exit "DNS provider ${DNS_PROVIDER} is not supported"
     fi
 
