@@ -59,7 +59,7 @@ check_env() {
         error_exit "EMAIL must be specified"
     fi
 
-    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ] && [ "${DNS_PROVIDER}" != 'digitalocean' ]; then
+    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ] && [ "${DNS_PROVIDER}" != 'digitalocean' ]&& [ "${DNS_PROVIDER}" != 'duckdns' ]; then
         error_exit "DNS provider ${DNS_PROVIDER} is not supported"
     fi
 
@@ -84,6 +84,13 @@ check_env() {
             error_exit "DO_AUTH_TOKEN must be specified"
         fi
     fi
+
+    if [ "${DNS_PROVIDER}" = 'duckdns' ]; then
+        if [ -z "${DUCKDNS_TOKEN+x}" ]; then
+            error_exit "DUCKDNS_TOKEN must be specified"
+        fi
+    fi	
+
 }
 
 # Function set_os sets the os if needed and validates the value.
@@ -274,6 +281,36 @@ run_lego_digitalocean() {
     fi
 }
 
+
+run_lego_duckdns() {
+    if [ "${SERVER:-}" != "" ] &&
+        [ "${EAB_KID:-}" != "" ] &&
+        [ "${EAB_HMAC:-}" != "" ]; then
+        DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --server "${SERVER:-}" \
+            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --dns duckdns \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run
+    else
+        DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --dns duckdns \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run \
+            --preferred-chain="ISRG Root X1"
+    fi
+}
+
 run_lego() {
     domainName="${DOMAIN_NAME}"
     wildcardDomainName="*.${DOMAIN_NAME}"
@@ -291,6 +328,10 @@ run_lego() {
 
     digitalocean)
 	run_lego_digitalocean
+	;;
+
+    duckdns)
+	run_lego_duckdns
 	;;
 
     *)
