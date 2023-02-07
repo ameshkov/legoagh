@@ -62,7 +62,7 @@ DOMAIN_NAME="example.duckdns.org" \
     ./lego.sh
 ```
 
-If you're using Name.com, you need to [copy the username and TOCKEN from duckdns](https://www.name.com/account/settings/api).
+If you're using Name.com, you need to [copy the username and TOCKEN from namedotcom](https://www.name.com/account/settings/api).
 
 Then run the script:
 
