@@ -62,6 +62,19 @@ DOMAIN_NAME="example.duckdns.org" \
     ./lego.sh
 ```
 
+If you're using Name.com, you need to [copy the username and TOCKEN from duckdns](https://www.name.com/account/settings/api).
+
+Then run the script:
+
+```bash
+DOMAIN_NAME="example.org" \
+    EMAIL="you@email" \
+    DNS_PROVIDER="namedorcom" \
+    NAMECOM_API_TOKEN="yournamedotcomtoken" \
+    NAMECOM_USERNAME="yournamedotcomusername" \
+    ./lego.sh
+```
+
 By default, it uses [Let's Encrypt](https://letsencrypt.org/) to generate the certificate.
 
 Alternatively, you can use a different provider. For instance, [ZeroSSL](https://zerossl.com/).
