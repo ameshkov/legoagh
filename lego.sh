@@ -59,7 +59,7 @@ check_env() {
         error_exit "EMAIL must be specified"
     fi
 
-    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ] && [ "${DNS_PROVIDER}" != 'digitalocean' ] && [ "${DNS_PROVIDER}" != 'duckdns' ]; then
+    if [ "${DNS_PROVIDER}" != 'godaddy' ] && [ "${DNS_PROVIDER}" != 'cloudflare' ] && [ "${DNS_PROVIDER}" != 'digitalocean' ] && [ "${DNS_PROVIDER}" != 'duckdns' ] && [ "${DNS_PROVIDER}" != 'namedotcom' ]; then
         error_exit "DNS provider ${DNS_PROVIDER} is not supported"
     fi
 
@@ -90,6 +90,16 @@ check_env() {
             error_exit "DUCKDNS_TOKEN must be specified"
         fi
     fi	
+	
+    if [ "${DNS_PROVIDER}" = 'namedotcom' ]; then
+        if [ -z "${NAMECOM_USERNAME+x}" ]; then
+            error_exit "NAMECOM_USERNAME must be specified"
+        fi
+
+        if [ -z "${NAMECOM_API_TOKEN+x}" ]; then
+            error_exit "NAMECOM_API_TOKEN must be specified"
+        fi
+    fi
 
 }
 
@@ -365,7 +375,7 @@ run_lego() {
 	;;
 
     namedotcom)
-	run_lego_duckdns
+	run_lego_namedotcom
 	;;
 	
     *)
