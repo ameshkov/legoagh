@@ -311,6 +311,36 @@ run_lego_duckdns() {
     fi
 }
 
+run_lego_namedotcom() {
+    if [ "${SERVER:-}" != "" ] &&
+        [ "${EAB_KID:-}" != "" ] &&
+        [ "${EAB_HMAC:-}" != "" ]; then
+        DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --server "${SERVER:-}" \
+            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --dns namedotcom \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run
+    else
+		NAMECOM_USERNAME="${NAMECOM_USERNAME}" \
+        NAMECOM_API_TOKEN="${NAMECOM_API_TOKEN}" \
+            ./lego \
+            --accept-tos \
+            --dns namedotcom \
+            --domains "${wildcardDomainName}" \
+            --domains "${domainName}" \
+            --email "${email}" \
+            --cert.timeout 600 \
+            run \
+            --preferred-chain="ISRG Root X1"
+    fi
+}
+
 run_lego() {
     domainName="${DOMAIN_NAME}"
     wildcardDomainName="*.${DOMAIN_NAME}"
@@ -334,6 +364,10 @@ run_lego() {
 	run_lego_duckdns
 	;;
 
+    namedotcom)
+	run_lego_duckdns
+	;;
+	
     *)
         error_exit "Unsupported DNS provider ${DNS_PROVIDER}"
         ;;
