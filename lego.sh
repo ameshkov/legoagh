@@ -184,12 +184,23 @@ set_cpu() {
 
 download_lego() {
     legoDist="lego.tar.gz"
+    etagFile=".lego.etag"
     arch="_${os}_${cpu}.tar"
     releaseURL=$(curl -s "https://api.github.com/repos/go-acme/lego/releases/latest" | grep "browser_download_url" | grep "${arch}" | grep -o "https://[^\"]*")
+    
+    # If the lego executable doesn't exist then wipe our etags so that it gets re-downloaded
+    if [ ! -f lego ]; then
+        rm -f ${etagFile} 
+    fi
+
     echo "Downloading the latest lego release from ${releaseURL}"
-    curl -s -L "${releaseURL}" --output ${legoDist}
-    tar xvfz ${legoDist}
-    echo "Extracting the latest lego version"
+    curl -L --etag-save ${etagFile} --etag-compare ${etagFile} "${releaseURL}" --output ${legoDist}
+
+    if [ -f ${legoDist} ]; then
+        echo "Extracting the latest lego version"
+        tar xvfz ${legoDist}
+        rm ${legoDist}
+    fi
 }
 
 run_lego_cloudflare() {
