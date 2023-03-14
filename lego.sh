@@ -6,7 +6,10 @@ set -e -f -u
 
 # Env configuration
 #
-# DOMAIN_NAME       Main domain name we're obtaining a wildcard certificate for.
+# DOMAIN_NAME       Main domain name(s) we're obtaining a wildcard certificate for. Can be either a single domain name 
+#                   or a comma separated list. For a comma separated list, do not include spaces between values and
+#                   only use the base (no wildcard) domain, ie: "dns.example.com,dns.differentexample.com"
+#
 # DNS_PROVIDER      DNS provider lego uses to prove that you're in control of
 # 					the domain. The current version supports the following hosts:
 # 					"cloudflare", "digitalocean", "dreamhost", "duckdns" and "godaddy".
@@ -379,8 +382,8 @@ run_lego_duckdns() {
 }
 
 run_lego() {
-    domainName="${DOMAIN_NAME}"
-    wildcardDomainName="*.${DOMAIN_NAME}"
+    domainName="${DOMAIN_STRING}"
+    wildcardDomainName="${WILDCARD_STRING}"
     email="${EMAIL}"
 
     case ${DNS_PROVIDER} in
@@ -416,13 +419,22 @@ get_abs_filename() {
 }
 
 copy_certificate() {
-    certFileName="${DOMAIN_NAME}"
+    certFileName="${DOMAIN_ARRAY[0]}"
     cp -f "./.lego/certificates/_.${certFileName}.key" "./${certFileName}.key"
     cp -f "./.lego/certificates/_.${certFileName}.crt" "./${certFileName}.crt"
 
     log "Your certificate and key are available at:"
     log "$(get_abs_filename ${certFileName}.crt)"
     log "$(get_abs_filename ${certFileName}.key)"
+}
+
+parse_domain_names() {
+    IFS="," read -ra DOMAIN_ARRAY <<< "$DOMAIN_NAME"
+    WILDCARD_ARRAY=( "${DOMAIN_ARRAY[@]/#/*.}" )
+    printf -v DOMAIN_STRING '%s,' "${DOMAIN_ARRAY[@]}"
+    printf -v WILDCARD_STRING '%s,' "${WILDCARD_ARRAY[@]}"
+    DOMAIN_STRING="${DOMAIN_STRING%,}"
+    WILDCARD_STRING="${WILDCARD_STRING%,}"
 }
 
 # Entrypoint
@@ -440,6 +452,8 @@ check_env
 set_os
 
 set_cpu
+
+parse_domain_names
 
 download_lego
 
