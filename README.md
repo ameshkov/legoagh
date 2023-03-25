@@ -8,7 +8,7 @@ Prepare:
 
 ```bash
 mkdir /opt/lego
-curl -s https://raw.githubusercontent.com/ameshkov/legoagh/master/lego.sh --output lego.sh
+curl -s https://raw.githubusercontent.com/geshas/legoagh/master/lego.sh --output lego.sh
 chmod +x lego.sh
 ```
 
