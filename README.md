@@ -69,7 +69,7 @@ Then run the script:
 ```bash
 DOMAIN_NAME="example.org" \
     EMAIL="you@email" \
-    DNS_PROVIDER="namedorcom" \
+    DNS_PROVIDER="namedotcom" \
     NAMECOM_API_TOKEN="yournamedotcomtoken" \
     NAMECOM_USERNAME="yournamedotcomusername" \
     ./lego.sh
