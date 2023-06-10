@@ -50,8 +50,12 @@ check_env() {
     if [ -z "${CMDTYPE+x}" ]; then
         cmdtype=`run`
     else
-		cmdtype=`renew`
-	fi
+    if [ "${CMDTYPE}" = 'renew' ]; then
+        cmdtype=`renew`
+    else 
+        cmdtype=`run`
+    fi
+    fi
 
     if [ -z "${DOMAIN_NAME+x}" ]; then
         error_exit "DOMAIN_NAME must be specified"
