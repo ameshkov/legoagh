@@ -47,6 +47,12 @@ log() {
 }
 
 check_env() {
+    if [ -z "${CMDTYPE+x}" ]; then
+        cmdtype=`run`
+    else
+		cmdtype=`renew`
+	fi
+
     if [ -z "${DOMAIN_NAME+x}" ]; then
         error_exit "DOMAIN_NAME must be specified"
     fi
@@ -216,7 +222,7 @@ run_lego_cloudflare() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run
+            "${cmdtype}"
     else
         CLOUDFLARE_DNS_API_TOKEN="${CLOUDFLARE_DNS_API_TOKEN}" \
             ./lego \
@@ -226,7 +232,7 @@ run_lego_cloudflare() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
+            "${cmdtype}" \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -246,7 +252,7 @@ run_lego_godaddy() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run
+            "${cmdtype}"
     else
         GODADDY_API_KEY="${GODADDY_API_KEY}" \
             GODADDY_API_SECRET="${GODADDY_API_SECRET}" \
@@ -257,7 +263,7 @@ run_lego_godaddy() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
+            "${cmdtype}" \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -276,7 +282,7 @@ run_lego_digitalocean() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run
+            "${cmdtype}"
     else
         DO_AUTH_TOKEN="${DO_AUTH_TOKEN}" \
             ./lego \
@@ -286,7 +292,7 @@ run_lego_digitalocean() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
+            "${cmdtype}" \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -306,7 +312,7 @@ run_lego_duckdns() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run
+            "${cmdtype}"
     else
         DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
             ./lego \
@@ -316,7 +322,7 @@ run_lego_duckdns() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
+            "${cmdtype}" \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -325,7 +331,7 @@ run_lego_namedotcom() {
     if [ "${SERVER:-}" != "" ] &&
         [ "${EAB_KID:-}" != "" ] &&
         [ "${EAB_HMAC:-}" != "" ]; then
-        DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
+        echo DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
             ./lego \
             --accept-tos \
             --server "${SERVER:-}" \
@@ -335,7 +341,7 @@ run_lego_namedotcom() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run
+            "${cmdtype}"
     else
 		NAMECOM_USERNAME="${NAMECOM_USERNAME}" \
         NAMECOM_API_TOKEN="${NAMECOM_API_TOKEN}" \
@@ -346,7 +352,7 @@ run_lego_namedotcom() {
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
+            "${cmdtype}" \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -355,6 +361,7 @@ run_lego() {
     domainName="${DOMAIN_NAME}"
     wildcardDomainName="*.${DOMAIN_NAME}"
     email="${EMAIL}"
+    
 
     case ${DNS_PROVIDER} in
 
@@ -407,6 +414,8 @@ os=''
 domainName=''
 wildcardDomainName=''
 email=''
+cmdtype=`run`
+
 
 check_env
 
