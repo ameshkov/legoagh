@@ -48,12 +48,12 @@ log() {
 
 check_env() {
     if [ -z "${CMDTYPE+x}" ]; then
-        cmdtype=`run`
+        cmdtype='run'
     else
     if [ "${CMDTYPE}" = 'renew' ]; then
-        cmdtype=`renew`
+        cmdtype='renew'
     else 
-        cmdtype=`run`
+        cmdtype='run'
     fi
     fi
 
@@ -418,7 +418,7 @@ os=''
 domainName=''
 wildcardDomainName=''
 email=''
-cmdtype=`run`
+cmdtype='run'
 
 
 check_env
